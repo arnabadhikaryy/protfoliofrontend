@@ -1,0 +1,86 @@
+import React, { useState } from "react";
+import axios from "axios";
+
+const EducationUploadForm = () => {
+  const [formData, setFormData] = useState({
+    title: "",
+    discriotion: "",
+    coures_certificate_image: null,
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "coures_certificate_image") {
+      setFormData({ ...formData, coures_certificate_image: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
+
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("discriotion", formData.discriotion);
+    data.append("coures_certificate_image", formData.coures_certificate_image);
+
+    try {
+      await axios.post("http://localhost:8000/edu/upload", data);
+      setMessage("Upload successful!");
+    } catch (err) {
+      console.error(err);
+      setMessage("Upload failed!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-md mx-auto bg-white shadow-md rounded-md">
+      <h2 className="text-2xl font-semibold mb-4">Upload Education Certificate</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="text"
+          name="title"
+          placeholder="Course Title"
+          className="input input-bordered"
+          value={formData.title}
+          onChange={handleChange}
+          required
+        />
+        <textarea
+          name="discriotion"
+          placeholder="Description"
+          className="textarea textarea-bordered"
+          value={formData.discriotion}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="file"
+          name="coures_certificate_image"
+          className="file-input file-input-bordered"
+          accept="image/*"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit" className="btn btn-primary" disabled={isLoading}>
+          {isLoading ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            "Upload"
+          )}
+        </button>
+      </form>
+      {message && <p className="mt-4 text-center font-medium">{message}</p>}
+    </div>
+  );
+};
+
+export default EducationUploadForm;
