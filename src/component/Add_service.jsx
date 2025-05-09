@@ -3,6 +3,9 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 
 const UploadService = () => {
+   
+  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+
   const [formData, setFormData] = useState({
     title: '',
     discriotion: '',
@@ -41,7 +44,7 @@ const UploadService = () => {
     const payload = { ...formData, token };
 
     try {
-      const response = await axios.post('http://localhost:8000/service/upload', payload);
+      const response = await axios.post(MainUrl+'/service/upload', payload);
       if(response.data.status == true){
         console.log('Success:', response.data);
         toast(response.data.message);

@@ -7,7 +7,7 @@ function Create_token() {
   const [id, setId] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -21,7 +21,7 @@ function Create_token() {
     setMessage('');
 
     try {
-      const res = await axios.post('http://localhost:8000/basic/login', { _id: id }, { withCredentials: true });
+      const res = await axios.post(MainUrl+'/basic/login', { _id: id }, { withCredentials: true });
 
       if (res.data.status === true) {
         Cookies.set('token', res.data.token);

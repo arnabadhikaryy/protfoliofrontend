@@ -8,6 +8,7 @@ const EducationUploadForm = () => {
     coures_certificate_image: null,
   });
 
+  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -31,7 +32,7 @@ const EducationUploadForm = () => {
     data.append("coures_certificate_image", formData.coures_certificate_image);
 
     try {
-      await axios.post("http://localhost:8000/edu/upload", data);
+      await axios.post(MainUrl+"/edu/upload", data);
       setMessage("Upload successful!");
     } catch (err) {
       console.error(err);

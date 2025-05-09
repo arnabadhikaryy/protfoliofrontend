@@ -10,6 +10,7 @@ const ProjectUploadForm = () => {
     projectImage: null,
   });
 
+  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -35,7 +36,7 @@ const ProjectUploadForm = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/project/upload/project",
+        MainUrl+"/project/upload/project",
         data
       );
       setMessage("Upload successful!");

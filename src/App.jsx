@@ -8,6 +8,7 @@ import { Document } from 'react-pdf';
 function App() {
 
   const navigate = useNavigate();
+  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
 
   const [basic_details, set_basic_details] = useState([]);
   const [basic_detail_load, set_basic_detail_load] = useState(true)
@@ -35,16 +36,16 @@ function App() {
 
         ){
 
-          const response_basic = await axios.get('http://localhost:8000/basic/get');
+          const response_basic = await axios.get(MainUrl+'/basic/get');
         console.log("basic data response is", response_basic.data.data);
 
-        const response_project = await axios.get('http://localhost:8000/project/get');
+        const response_project = await axios.get(MainUrl+'/project/get');
         console.log("project data response is", response_project.data.data);
 
-        const response_education = await axios.get('http://localhost:8000/edu/get');
+        const response_education = await axios.get(MainUrl+'/edu/get');
         console.log("education data response is", response_education.data.data);
 
-        const response_service = await axios.get('http://localhost:8000/service/get');
+        const response_service = await axios.get(MainUrl+'/service/get');
         console.log("service data response is", response_service.data.data);
 
         if (response_basic.data.data) {

@@ -13,6 +13,8 @@ function AddSkill() {
   
   const navigate = useNavigate();
 
+  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -35,7 +37,7 @@ const handleSubmit = async (e) => {
 
     // 2. Send token along with other form data in the body
     const res = await axios.post(
-      'http://localhost:8000/basic/add/skill',
+      MainUrl+'/basic/add/skill',
       {
         skill_name: skillName,
         confidance: confidence,
