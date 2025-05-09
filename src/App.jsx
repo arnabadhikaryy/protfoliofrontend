@@ -88,7 +88,7 @@ function App() {
     }, {});
 
     if (!cookies.token) {
-      toast.error("You have no access token ! for create a access token go to '/create/token' URL");
+      toast.error("You have no access token ! for create a access token go to '/create/token' URL..");
       return;
     }
 
