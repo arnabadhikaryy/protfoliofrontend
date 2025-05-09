@@ -97,7 +97,7 @@ function App() {
 
 
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer lg:drawer-open text-black">
        <Toaster />
       {/* ✅ Sidebar toggle checkbox */}
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
