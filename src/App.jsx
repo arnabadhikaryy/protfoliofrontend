@@ -336,7 +336,7 @@ function App() {
       {/* ✅ Sidebar Drawer */}
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-        <ul className="menu p-4 min-h-full bg-base-200 text-base-content">
+        <ul className="menu p-4 min-h-full bg-emerald-200 text-base-content">
           <div className=" flex flex-col items-center justify-center h-full text-black space-y-3 lg:sticky">
             <div className="avatar">
               <div className="w-24 rounded-full">
