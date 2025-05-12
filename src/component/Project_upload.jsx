@@ -3,6 +3,14 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const ProjectUploadForm = () => {
+
+  // Helper to get token from cookies
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  if (match) return match[2];
+  return null;
+};
+  
   const [formData, setFormData] = useState({
     title: "",
     discriotion: "",
@@ -34,12 +42,23 @@ const ProjectUploadForm = () => {
     data.append("project_link", formData.project_link);
     data.append("projectImage", formData.projectImage);
 
+    // Add token from cookie to body
+  const token = getCookie("token");
+  if (token) {
+    data.append("token", token);
+  }
+
     try {
       const res = await axios.post(
         MainUrl+"/project/upload/project",
         data
       );
-      setMessage("Upload successful!");
+      if(res.data){
+      setMessage(res.data.message);
+      }
+      else{
+        setMessage('somthing wrong... try again');
+      }
     } catch (err) {
       console.error(err);
       setMessage("Upload failed!");
