@@ -32,8 +32,12 @@ const EducationUploadForm = () => {
     data.append("coures_certificate_image", formData.coures_certificate_image);
 
     try {
-      await axios.post(MainUrl+"/edu/upload", data);
-      setMessage("Upload successful!");
+      let res = await axios.post(MainUrl+"/edu/upload", data);
+      if(res.data.status==true){setMessage("Upload successful!");}
+      else if(res.data.status==false){setMessage(res.data.message);}
+      else{
+        setMessage("file uploding fail")
+      }
     } catch (err) {
       console.error(err);
       setMessage("Upload failed!");
@@ -43,7 +47,7 @@ const EducationUploadForm = () => {
   };
 
   return (
-    <div className="p-6 max-w-md mx-auto bg-white shadow-md rounded-md">
+    <div className="p-6 max-w-md mx-auto bg-cyan-500  shadow-md rounded-md">
       <h2 className="text-2xl font-semibold mb-4">Upload Education Certificate</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
