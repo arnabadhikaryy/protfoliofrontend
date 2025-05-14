@@ -37,6 +37,12 @@ const EducationUploadForm = () => {
     data.append("discriotion", formData.discriotion);
     data.append("coures_certificate_image", formData.coures_certificate_image);
 
+    const token = getCookie("token");
+  if (token) {
+    data.append("token", token);
+  }
+    
+
     try {
       let res = await axios.post(MainUrl+"/edu/upload", data);
       if(res.data.status==true){setMessage("Upload successful!");}
