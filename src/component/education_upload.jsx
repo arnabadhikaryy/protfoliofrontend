@@ -12,6 +12,12 @@ const EducationUploadForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  if (match) return match[2];
+  return null;
+};
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (name === "coures_certificate_image") {
