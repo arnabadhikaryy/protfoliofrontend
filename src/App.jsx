@@ -99,10 +99,7 @@ function App() {
   return (
     <div className="drawer lg:drawer-open text-black">
        <Toaster />
-      {/* ✅ Sidebar toggle checkbox */}
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-
-      {/* ✅ Sticky Toggle Button (Only shows on small/medium screens) */}
       <label
         htmlFor="my-drawer-2"
         className="drawer-button fixed top-4 left-4 z-50 lg:hidden"
@@ -113,8 +110,6 @@ function App() {
           alt="menu"
         />
       </label>
-
-      {/* ✅ Page Content */}
       <div className="drawer-content bg-amber-50 min-h-screen p-4">
 
 
@@ -123,7 +118,7 @@ function App() {
           <div className="w-full md:w-1/2 mt-4 md:mt-8">
             <p className="font-bold text-2xl md:text-3xl">
               I'm Arnab Adhikary<br />
-              <span className="text-amber-600">Full Stack</span> Web Developer
+              <span className="text-amber-600">Full Stack</span> Web Developer & Programmer
             </p>
             <p className="mt-2 text-sm md:text-base">
             A highly motivated web developer with a passion for coding and creating dynamic, user-friendly websites. Proficient in modern frontend and backend technologies. Looking to leverage my skills in a professional setting to contribute to the development of innovative web solutions
