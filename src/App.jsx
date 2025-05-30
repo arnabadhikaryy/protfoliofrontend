@@ -366,49 +366,7 @@ function App() {
 
             </div>
 
-            <hr className=" h-2.5 w-[7cm]" />
-
-            {/* age and address */}
-
-            {basic_detail_load ? (<span className="loading loading-infinity loading-xl"></span>) :
-              <div className="">
-
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">D.O.B</div>
-                  <p className="mx-8 w-[2.3cm] h-[0.7cm] rounded-sm flex items-center justify-center font-bold ">{basic_details[0].date_of_barth}</p>
-                </div>
-
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">PHONE</div>
-                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center ">{basic_details[0].pnone}</p>
-                </div>
-
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">Email</div>
-                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center">{basic_details[0].email}</p>
-                </div>
-
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">Address</div>
-                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center ">{basic_details[0].address}</p>
-                </div>
-
-              </div>}
-
-
-            <hr className=" h-2.5 w-[7cm]" />
-
-            {/* showing language */}
-            <h1 className=" font-bold text-2xl">Languages</h1>
-            {basic_detail_load ? (<span className="loading loading-spinner text-success"></span>) :
-              <div>
-                <div className=" bg-black font-bold text-amber-50 h-[0.8cm] w-[7cm] flex items-center justify-center rounded-md">
-                  {basic_details[0].language}
-                </div>
-              </div>
-            }
-
-            {/* slowing skills */}
+                        {/* slowing skills */}
             <hr className=" h-2.5 w-[7cm]" />
 
             <h1 className=" font-bold text-2xl">Skills</h1>
@@ -463,6 +421,48 @@ function App() {
 
 
 
+              </div>
+            }
+
+            <hr className=" h-2.5 w-[7cm]" />
+
+            {/* age and address */}
+
+            {basic_detail_load ? (<span className="loading loading-infinity loading-xl"></span>) :
+              <div className="">
+
+                <div className=" flex m-3.5">
+                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">D.O.B</div>
+                  <p className="mx-8 w-[2.3cm] h-[0.7cm] rounded-sm flex items-center justify-center font-bold ">{basic_details[0].date_of_barth}</p>
+                </div>
+
+                <div className=" flex m-3.5">
+                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">PHONE</div>
+                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center ">{basic_details[0].pnone}</p>
+                </div>
+
+                <div className=" flex m-3.5">
+                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">Email</div>
+                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center">{basic_details[0].email}</p>
+                </div>
+
+                <div className=" flex m-3.5">
+                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">Address</div>
+                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center ">{basic_details[0].address}</p>
+                </div>
+
+              </div>}
+
+
+            <hr className=" h-2.5 w-[7cm]" />
+
+            {/* showing language */}
+            <h1 className=" font-bold text-2xl">Languages</h1>
+            {basic_detail_load ? (<span className="loading loading-spinner text-success"></span>) :
+              <div>
+                <div className=" bg-black font-bold text-amber-50 h-[0.8cm] w-[7cm] flex items-center justify-center rounded-md">
+                  {basic_details[0].language}
+                </div>
               </div>
             }
 
