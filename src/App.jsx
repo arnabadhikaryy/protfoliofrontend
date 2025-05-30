@@ -128,7 +128,7 @@ function App() {
             </div>
           </div>
           <div className="w-full h-full md:w-1/2 mt-4 md:mt-0 flex justify-center">
-             <object data=".src/assets/resume/arnab_cv_1edition.pdf" type="application/pdf" ></object>
+             <object data="../src/assets/resume/arnab_cv_1edition.pdf" type="application/pdf" ></object>
           </div>
         </div>
 
