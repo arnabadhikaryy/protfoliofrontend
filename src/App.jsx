@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
-import { Document } from 'react-pdf';
-
 
 function App() {
 
@@ -28,30 +26,27 @@ function App() {
       try {
 
         if(
-
           basic_details.length === 0 &&
           education_details.length === 0 &&
           project_details.length === 0 &&
           service_details.length === 0
-
         ){
 
-          const response_basic = await axios.get(MainUrl+'/basic/get');
-        console.log("basic data response is", response_basic.data.data);
+        const response_basic = await axios.get(MainUrl+'/basic/get');
+        // console.log("basic data response is", response_basic.data.data);
 
         const response_project = await axios.get(MainUrl+'/project/get');
-        console.log("project data response is", response_project.data.data);
+        // console.log("project data response is", response_project.data.data);
 
         const response_education = await axios.get(MainUrl+'/edu/get');
-        console.log("education data response is", response_education.data.data);
+        // console.log("education data response is", response_education.data.data);
 
         const response_service = await axios.get(MainUrl+'/service/get');
-        console.log("service data response is", response_service.data.data);
+        // console.log("service data response is", response_service.data.data);
 
         if (response_basic.data.data) {
           set_basic_details(response_basic.data.data);
           set_basic_detail_load(false);
-          //console.log('profile url is ', basic_details[0].prifile_url)
         } 
 
         if (response_project.data.data) {
@@ -62,7 +57,6 @@ function App() {
         if (response_education.data.data) {
           set_education_details(response_education.data.data);
           set_education_details_load(false);
-          //console.log(education_details)
         }
 
         if (response_service.data.data) {
@@ -80,7 +74,6 @@ function App() {
   }, []);
 
   const check_token = (url) => {
-    // Get all cookies and find the 'token'
     const cookies = document.cookie.split(';').reduce((acc, curr) => {
       const [key, value] = curr.trim().split('=');
       acc[key] = value;
@@ -97,384 +90,330 @@ function App() {
 
 
   return (
-    <div className="drawer lg:drawer-open text-black">
+    <div className="drawer lg:drawer-open font-sans text-slate-800 bg-slate-50">
        <Toaster />
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <label
-        htmlFor="my-drawer-2"
-        className="drawer-button fixed top-4 left-4 z-50 lg:hidden"
-      >
-        <img
-          className="h-[1cm] m-1.5"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/640px-Hamburger_icon.svg.png"
-          alt="menu"
-        />
-      </label>
-      <div className="drawer-content bg-amber-50 min-h-screen p-4">
+      
+      {/* Mobile Menu Button */}
+      <div className="drawer-content flex flex-col items-start justify-start">
+        <label
+          htmlFor="my-drawer-2"
+          className="btn btn-circle btn-ghost fixed top-4 left-4 z-50 lg:hidden bg-white shadow-md"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" /></svg>
+        </label>
 
+        {/* MAIN CONTENT AREA */}
+        <div className="w-full min-h-screen pb-10">
 
-
-        <div className="flex flex-col md:flex-row h-auto md:h-[9cm] items-center justify-between bg-[url('https://static.vecteezy.com/system/resources/thumbnails/033/351/258/small_2x/beautiful-bright-wallpaper-nature-background-ai-generated-photo.jpg')] bg-no-repeat bg-center bg-cover p-4">
-          <div className="w-full md:w-1/2 mt-4 md:mt-8">
-            <p className="font-bold text-2xl md:text-3xl">
-              I'm Arnab Adhikary<br />
-              <span className="text-amber-600">Full Stack</span> Web Developer & Programmer
-            </p>
-            <p className="mt-2 text-sm md:text-base">
-            A highly motivated web developer with a passion for coding and creating dynamic, user-friendly websites. Proficient in modern frontend and backend technologies. Looking to leverage my skills in a professional setting to contribute to the development of innovative web solutions
-            </p>
-            <div className="flex justify-end mt-4">
-              <button className="btn btn-neutral active:text-black active:bg-amber-50">Hire me</button>
-            </div>
-          </div>
-          <div className="w-full h-full md:w-1/2 mt-4 md:mt-0 flex justify-center">
-             <object data="../src/assets/resume/arnab_cv_1edition.pdf" type="application/pdf" ></object>
-          </div>
-        </div>
-
-
-        {/* EDUCATION SECTION */}
-        <div className=" flex flex-col items-center m-2 mt-7 mb-[2cm]">
-          <h1 className=" text-4xl font-bold">Education</h1>
-          <p>Hare is my education achievment, courses and certificates</p>
-        </div>
-
-        <div>
-          {/* Header row */}
-          <div className="flex flex-col md:flex-row bg-blue-500 items-center justify-between m-2 p-2 gap-2 text-white">
-            <div className="font-bold text-base md:text-xl">Title</div>
-            <div className="font-bold text-base md:text-xl">Description</div>
-            <div className="font-bold text-base md:text-xl">Certificate</div>
-          </div>
-
-          {/* Course 1 */}
-         {education_details_load ? (<div className=" h-[3cm] flex items-center justify-center"> <span className="loading loading-bars loading-xl"></span> </div>):(<div>
-
-          {education_details.map((item,index)=>(
-             <div key={index} className="flex flex-col md:flex-row bg-blue-200 items-center justify-between m-2 p-2 gap-2 h-auto md:h-[4cm]">
-             <div className="font-bold text-base md:text-xl">{item.title}</div>
-             <div className="text-sm md:text-base text-center md:text-left">
-               {item.discriotion}
-             </div>
-             <div className="h-[150px] w-full md:w-[4cm]">
-               <img
-               onClick={()=>{ window.open(item.certificate_url, "_blank"); }}
-                 className="h-full w-full object-contain cursor-pointer"
-                 src={item.certificate_url}
-                 alt=""
-               />
-             </div>
-           </div>
-          ))}
-
-         </div>)}
-
-
-          {/* Add More Button */}
-          <div onClick={()=>{check_token('/upload/servide')}} className="flex bg-black text-amber-50 items-center justify-center m-2 hover:text-black hover:bg-amber-200 cursor-pointer active:bg-black active:text-amber-50 p-2">
-            <div className="font-bold text-base md:text-xl">Add More +</div>
-          </div>
-
-
-
-        </div>
-
-
-
-        {/* Project SECTION */}
-        <div className=" flex flex-col items-center m-2 mt-7 mb-[2cm]">
-          <h1 className=" text-4xl font-bold">Projects</h1>
-          <p>Hare is some projects.</p>
-        </div>
-
-        {/* project cards in the billoe div */}
-        <div className="flex flex-wrap justify-center gap-4 p-4">
-          {/* Card 1 */}
-
-          { project_details_load ? (<span className="loading loading-bars loading-xl"></span>) : (
-                project_details.map((item,index)=>(
-                  <div key={index} className="card bg-base-100 w-full sm:w-60 shadow-sm">
-                  <figure>
-                    <img
-                      src={item.project_snap_url}
-                      alt="Project"
-                      className="w-full object-cover"
-                    />
-                  </figure>
-                  <div className="card-body">
-                    <h2 className="card-title">{item.title}</h2>
-                    <p>{item.discriotion}</p>
-                    <div className="card-actions justify-end">
-                      <button onClick={()=>{window.open(item.project_link, "_blank");}} className="btn btn-primary">see project</button>
-                    </div>
+          {/* HERO SECTION */}
+          <div className="relative w-full bg-slate-900 text-white overflow-hidden">
+             {/* Background Image with Overlay */}
+            
+             
+             <div className="relative z-10 container mx-auto px-6 py-16 lg:py-24 flex flex-col md:flex-row items-center justify-between gap-10">
+                <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">
+                  <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+                    I'm {basic_detail_load ? "..." : basic_details[0]?.my_name}
+                    <span className="block text-amber-500 mt-2">Full Stack Developer</span>
+                  </h2>
+                  <p className="text-slate-300 text-lg leading-relaxed max-w-lg mx-auto md:mx-0">
+                    A highly motivated web developer with a passion for coding and creating dynamic, user-friendly websites. Proficient in modern frontend and backend technologies.
+                  </p>
+                  <div className="flex gap-4 justify-center md:justify-start pt-4">
+                    {/* <button className="btn btn-primary bg-amber-600 hover:bg-amber-700 border-none text-white px-8">Hire Me</button>
+                    <button className="btn btn-outline text-white hover:bg-white hover:text-black">View Projects</button> */}
                   </div>
                 </div>
-                ))
-          ) }
-          
-         
-        </div>
 
-        {/* Add More Button */}
-        <div onClick={()=>{check_token('/upload/project')}} className="flex bg-black text-amber-50 items-center justify-center m-4 p-3 hover:text-black hover:bg-amber-200 cursor-pointer active:bg-black active:text-amber-50 rounded-md">
-          <div className="font-bold text-base sm:text-xl">Add More Projects +</div>
-        </div>
-
-
-
-
-        {/* service SECTION */}
-        <div className=" flex flex-col items-center m-2 mt-7 mb-[2cm]">
-          <h1 className=" text-4xl font-bold">Service</h1>
-          <p></p>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-4 p-4">
-
-{/* Reusable Card */}
-{service_details_load ? (<div className=" flex m-7"> <span className="loading loading-bars loading-xl bg-amber-950"></span> </div>) : (
-  service_details.map((item, i) => (
-    <div
-      key={i}
-      className="bg-amber-100 h-[8cm] w-[6.5cm] flex flex-col items-center rounded-xl p-4 shadow-md hover:shadow-lg transition-all"
-    >
-      <div className="h-[3cm] w-[3cm] mb-2">
-        <img
-          src={item.icon_url}
-          alt="Service Icon"
-          className="object-contain w-full h-full"
-        />
-      </div>
-      <h1 className="font-bold text-xl text-center text-gray-800 mb-1">{item.title}</h1>
-      <p className="text-center text-gray-600 text-sm mb-1 px-2">
-        {item.discriotion}
-      </p>
-      <p className="text-gray-700 text-sm mb-3 font-semibold">Price: ₹{item.price}</p>
-      <button className="btn btn-neutral btn-sm">Contact for Free</button>
-    </div>
-  ))
-)}
-
-{/* Add New Skeleton Card */}
-<div  onClick={()=>{check_token('/upload/servide')}} className="bg-amber-50 h-[8cm] w-[6.5cm] flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-amber-300 hover:bg-amber-100 cursor-pointer transition-all shadow-inner">
-  <div className="h-[3cm] w-[3cm] opacity-40 mb-2">
-    <img
-      src="https://cdn-icons-png.flaticon.com/512/992/992651.png"
-      alt="Add More"
-      className="w-full h-full object-contain"
-    />
-  </div>
-  <h1 className="font-bold text-xl text-amber-400 mb-1">Add New Service</h1>
-  <p className="text-center text-gray-500 text-sm mb-3 px-3">Click to create a new service card</p>
-  <button className="btn btn-outline btn-sm">+ Add New</button>
-</div>
-
-</div>
-
-
-
-        {/* contect SECTION */}
-        <div className=" flex flex-col items-center m-2 mt-7 mb-[2cm]">
-          <h1 className=" text-4xl font-bold">Contect</h1>
-          <p></p>
-        </div>
-
-        <div className=" flex flex-col items-center">
-
-          <input type="text" placeholder="your name" className="input input-neutral m-2" />
-
-          <label className="input validator m-2">
-            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2.5"
-                fill="none"
-                stroke="currentColor"
-              >
-                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-              </g>
-            </svg>
-            <input type="email" placeholder="mail@site.com" required />
-          </label>
-          <div className="validator-hint hidden">Enter valid email address</div>
-
-          <input type="text" placeholder="discription" className="input input-xl" />
-
-          <button className="btn btn-neutral m-2"> contect now </button>
-        </div>
-
-
-        {/* futter section */}
-        <footer className="bg-[#0c1124] text-white py-10 px-4 text-center">
-          <h1 className="text-3xl font-bold mb-6">arnab adhikary</h1>
-
-          <div className="flex justify-center gap-8 mb-6">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="white" viewBox="0 0 24 24"><path d="M22 12a10 10 0 1 0-11.6 9.87v-6.99H8v-2.88h2.4V9.41c0-2.4 1.43-3.74 3.63-3.74 1.05 0 2.15.19 2.15.19v2.37h-1.21c-1.2 0-1.57.75-1.57 1.52v1.83H17l-.38 2.88h-2.45v6.99A10 10 0 0 0 22 12z" /></svg>
-            </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="white" viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.584.012 4.85.07 1.17.056 1.97.25 2.42.42.49.185.84.41 1.21.78.37.37.595.72.78 1.21.17.45.364 1.25.42 2.42.058 1.267.07 1.65.07 4.85s-.012 3.584-.07 4.85c-.056 1.17-.25 1.97-.42 2.42-.185.49-.41.84-.78 1.21-.37.37-.72.595-1.21.78-.45.17-1.25.364-2.42.42-1.267.058-1.65.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.056-1.97-.25-2.42-.42a3.4 3.4 0 0 1-1.21-.78 3.4 3.4 0 0 1-.78-1.21c-.17-.45-.364-1.25-.42-2.42C2.212 15.584 2.2 15.2 2.2 12s.012-3.584.07-4.85c.056-1.17.25-1.97.42-2.42.185-.49.41-.84.78-1.21a3.4 3.4 0 0 1 1.21-.78c.45-.17 1.25-.364 2.42-.42C8.416 2.212 8.8 2.2 12 2.2Zm0 1.8c-3.144 0-3.513.012-4.747.068-.99.045-1.527.207-1.88.345-.45.18-.77.39-1.11.73-.34.34-.55.66-.73 1.11-.138.353-.3.89-.345 1.88C3.812 9.487 3.8 9.856 3.8 13s.012 3.513.068 4.747c.045.99.207 1.527.345 1.88.18.45.39.77.73 1.11.34.34.66.55 1.11.73.353.138.89.3 1.88.345C8.487 20.188 8.856 20.2 12 20.2s3.513-.012 4.747-.068c.99-.045 1.527-.207 1.88-.345.45-.18.77-.39 1.11-.73.34-.34.55-.66.73-1.11.138-.353.3-.89.345-1.88.056-1.234.068-1.603.068-4.747s-.012-3.513-.068-4.747c-.045-.99-.207-1.527-.345-1.88a3.4 3.4 0 0 0-.73-1.11 3.4 3.4 0 0 0-1.11-.73c-.353-.138-.89-.3-1.88-.345C15.513 4.012 15.144 4 12 4Zm0 3.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2Zm0 1.8a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Zm5.6-1.26a1.08 1.08 0 1 1-2.16 0 1.08 1.08 0 0 1 2.16 0Z" /></svg>
-            </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="white" viewBox="0 0 24 24"><path d="M22.46 6.011c-.793.352-1.644.59-2.538.696a4.392 4.392 0 0 0 1.924-2.422 8.775 8.775 0 0 1-2.782 1.06 4.381 4.381 0 0 0-7.466 3.993A12.436 12.436 0 0 1 3.15 4.766a4.381 4.381 0 0 0 1.355 5.843 4.36 4.36 0 0 1-1.983-.547v.055a4.382 4.382 0 0 0 3.514 4.294 4.39 4.39 0 0 1-1.979.075 4.383 4.383 0 0 0 4.089 3.04A8.791 8.791 0 0 1 2 19.549a12.384 12.384 0 0 0 6.713 1.967c8.048 0 12.458-6.666 12.458-12.458 0-.19-.005-.38-.013-.568a8.895 8.895 0 0 0 2.203-2.264l.001-.003Z" /></svg>
-            </a>
+                {/* Resume / Hero Image Area */}
+                <div className="w-full md:w-1/2 flex justify-center h-[400px] bg-white/10 rounded-xl backdrop-blur-sm p-2 shadow-2xl">
+                   <object 
+                    data="../src/assets/resume/arnab_cv_1edition.pdf" 
+                    type="application/pdf" 
+                    className="w-full h-full rounded-lg"
+                   >
+                     <div className="flex items-center justify-center h-full text-white">PDF Preview Unavailable</div>
+                   </object>
+                </div>
+             </div>
           </div>
 
-          <p className="text-sm">&copy; Bedimcode. All rights reserved</p>
-        </footer>
+          <div className="container mx-auto px-4 md:px-8 space-y-24 mt-16">
 
-
-      </div>
-
-      {/* ✅ Sidebar Drawer */}
-      <div className="drawer-side">
-        <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-        <ul className="menu p-4 min-h-full bg-emerald-200 text-base-content">
-          <div className=" flex flex-col items-center justify-center h-full text-black space-y-3 lg:sticky">
-            <div className="avatar">
-              <div className="w-24 rounded-full">
-                {basic_detail_load ? (
-                  <span className="loading loading-ring loading-xl mt-4 ml-4"></span>
-                ) : (
-                  <img src={basic_details[0].prifile_url} alt="Profile" />
-                )}
-              </div>
-            </div>
-            {basic_detail_load ? (<span className="loading loading-dots loading-xl"></span>) : (<div className="text-2xl font-semibold">{basic_details[0].my_name}</div>)}
-            {basic_detail_load ? (<span className="loading loading-dots loading-xl"></span>) : (<div className=" mt-[-0.4cm]">{basic_details[0].profation}</div>)}
-
-            {/* socalmidia icons */} 
-            <div className=" flex">
-
-              <div className="avatar mx-8" onClick={() => {
-                window.open(basic_details[0].github_link, '_blank');
-              }}>
-                <div className="w-[1.5cm] h-[1.4cm] rounded-full cursor-pointer bg-amber-500">
-                  <img src="https://w7.pngwing.com/pngs/646/324/png-transparent-github-computer-icons-github-logo-monochrome-head-thumbnail.png" />
-                </div>
+            {/* EDUCATION SECTION */}
+            <section>
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-slate-800">Education</h2>
+                <p className="text-slate-500 mt-2">My academic achievements, courses, and certifications</p>
+                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
               </div>
 
-              <div className="avatar mx-8" onClick={() => {
-                window.open(basic_details[0].linkdin_link, '_blank');
-              }}>
-                <div className="w-[1.5cm] h-[1.4cm] rounded-full cursor-pointer bg-amber-500">
-                  <img src="https://static.vecteezy.com/system/resources/previews/018/930/480/non_2x/linkedin-logo-linkedin-icon-transparent-free-png.png" />
-                </div>
-              </div>
+              {education_details_load ? (
+                <div className="flex justify-center p-10"><span className="loading loading-bars loading-lg text-amber-600"></span></div>
+              ) : (
+                <div className="space-y-4 max-w-4xl mx-auto">
+                  {/* Header (Desktop Only) */}
+                  <div className="hidden md:grid grid-cols-12 gap-4 bg-slate-800 text-white p-4 rounded-t-lg font-semibold">
+                    <div className="col-span-3">Title</div>
+                    <div className="col-span-6">Description</div>
+                    <div className="col-span-3 text-center">Certificate</div>
+                  </div>
 
-            </div>
-
-                        {/* slowing skills */}
-            <hr className=" h-2.5 w-[7cm]" />
-
-            <h1 className=" font-bold text-2xl">Skills</h1>
-
-            {basic_detail_load ? (<span className="loading loading-bars loading-xl"></span>) :
-
-              <div>
-
-                {
-                  basic_details[0].skills.map((item, index) => (
-                    <div className="flex ml-[-1cm]" key={index}>
-                      <div className="h-[1cm] w-[1cm]  rounded-sm flex items-center justify-center mt-1.5">
-                        <img
-                          src={item.icon_url}
-                          alt=""
-                        />
+                  {/* Rows */}
+                  {education_details.map((item, index) => (
+                    <div key={index} className="flex flex-col md:grid md:grid-cols-12 gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200 items-center hover:shadow-md transition-shadow">
+                      <div className="md:col-span-3 font-bold text-amber-600 text-lg md:text-base">{item.title}</div>
+                      <div className="md:col-span-6 text-slate-600 text-sm">{item.discriotion}</div>
+                      <div className="md:col-span-3 w-full flex justify-center">
+                        <div className="h-32 w-full md:w-32 bg-slate-100 rounded-md overflow-hidden border border-slate-200 cursor-pointer group relative" onClick={() => window.open(item.certificate_url, "_blank")}>
+                           <img src={item.certificate_url} alt="Cert" className="h-full w-full object-contain group-hover:scale-110 transition-transform" />
+                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                              <span className="opacity-0 group-hover:opacity-100 text-xs font-bold bg-white px-2 py-1 rounded">View</span>
+                           </div>
+                        </div>
                       </div>
+                    </div>
+                  ))}
+                  
+                  {/* Add More */}
+                  <button onClick={() => check_token('/upload/servide')} className="w-full py-3 border-2 border-dashed border-slate-300 text-slate-500 font-semibold rounded-lg hover:border-amber-500 hover:text-amber-600 transition-colors">
+                    + Add New Education
+                  </button>
+                </div>
+              )}
+            </section>
 
-                      <div className="bg-blue-200 rounded-sm m-1 w-[6.7cm]">
-                        <div className="flex justify-between px-2">
-                          <h1>{item.skill_name}</h1>
-                          <p>{item.confidance}</p>
-                        </div>
 
-                        <div className=" ml-2.5">
-                          <progress className="progress progress-neutral w-56" value={item.confidance} max="100"></progress>
+            {/* PROJECT SECTION */}
+            <section>
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-slate-800">Projects</h2>
+                <p className="text-slate-500 mt-2">A showcase of my recent work</p>
+                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
+              </div>
+
+              {project_details_load ? (
+                <div className="flex justify-center"><span className="loading loading-bars loading-lg text-amber-600"></span></div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {project_details.map((item, index) => (
+                    <div key={index} className="card bg-white shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-100 overflow-hidden group">
+                      <figure className="h-48 overflow-hidden relative">
+                        <img src={item.project_snap_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button onClick={() => window.open(item.project_link, "_blank")} className="btn btn-sm btn-primary">View Demo</button>
                         </div>
+                      </figure>
+                      <div className="card-body p-6">
+                        <h2 className="card-title text-slate-800">{item.title}</h2>
+                        <p className="text-slate-500 text-sm line-clamp-3">{item.discriotion}</p>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Project Card */}
+                  <div onClick={() => check_token('/upload/project')} className="card h-full min-h-[300px] border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-amber-500 transition-all group">
+                     <div className="text-center">
+                        <div className="text-4xl text-slate-300 group-hover:text-amber-500 mb-2">+</div>
+                        <span className="font-semibold text-slate-400 group-hover:text-amber-600">Add Project</span>
+                     </div>
+                  </div>
+                </div>
+              )}
+            </section>
+
+
+            {/* SERVICE SECTION */}
+            <section>
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-slate-800">Services</h2>
+                <p className="text-slate-500 mt-2">What I can do for you</p>
+                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {service_details_load ? (
+                  <div className="col-span-full flex justify-center"><span className="loading loading-bars loading-lg text-amber-600"></span></div>
+                ) : (
+                  service_details.map((item, i) => (
+                    <div key={i} className="bg-white rounded-xl p-6 shadow-md border-t-4 border-amber-500 hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center h-full">
+                      <div className="h-20 w-20 mb-4 p-2 bg-amber-50 rounded-full">
+                        <img src={item.icon_url} alt="Icon" className="object-contain w-full h-full" />
+                      </div>
+                      <h3 className="font-bold text-lg text-slate-800 mb-2">{item.title}</h3>
+                      <p className="text-slate-500 text-sm mb-4 flex-grow">
+                        {item.discriotion}
+                      </p>
+                      <div className="mt-auto w-full">
+                         <p className="text-amber-600 font-bold text-lg mb-3">₹{item.price}</p>
+                         <button className="btn btn-outline btn-sm w-full hover:bg-amber-500 hover:border-amber-500">Contact Me</button>
                       </div>
                     </div>
                   ))
-                }
+                )}
 
-                <div className="flex ml-[-1cm]">
-                  <div className="h-[1cm] w-[1cm]  rounded-sm flex items-center justify-center mt-1.5">
-                    <img
-                      src='https://png.pngtree.com/png-clipart/20190520/original/pngtree-question-mark-vector-icon-png-image_4017381.jpg'
-                      alt=""
-                    />
-                  </div>
-
-                  <div onClick={()=>{check_token('/add/skill')}} className=" cursor-pointer bg-blue-200 rounded-sm m-1 w-[6.7cm]">
-                    <div className="flex justify-center px-2">
-                      <button className=" bg-amber-600 mt-0.5 rounded-sm w-[3cm] font-bold text-amber-50 cursor-pointer hover:bg-amber-900 active:bg-amber-500">add more +</button>
-                    </div>
-
-                    <div className=" ml-2.5">
-                      <progress className="progress w-56"></progress>
-                    </div>
-                  </div>
-                </div>
-
-
-
-
+                 {/* Add Service Card */}
+                 <div onClick={() => check_token('/upload/servide')} className="rounded-xl p-6 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-all min-h-[300px]">
+                    <span className="text-4xl mb-2">✨</span>
+                    <h3 className="font-bold text-lg text-slate-400">New Service</h3>
+                    <p className="text-xs text-slate-400">Click to add</p>
+                 </div>
               </div>
-            }
+            </section>
 
-            <hr className=" h-2.5 w-[7cm]" />
 
-            {/* age and address */}
+            {/* CONTACT SECTION */}
+            <section className="max-w-xl mx-auto mb-20">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-slate-800">Contact Me</h2>
+                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
+              </div>
 
-            {basic_detail_load ? (<span className="loading loading-infinity loading-xl"></span>) :
-              <div className="">
-
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">D.O.B</div>
-                  <p className="mx-8 w-[2.3cm] h-[0.7cm] rounded-sm flex items-center justify-center font-bold ">{basic_details[0].date_of_barth}</p>
+              <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+                <div className="form-control w-full mb-4">
+                  <label className="label"><span className="label-text font-semibold">Your Name</span></label>
+                  <input type="text" placeholder="John Doe" className="input input-bordered w-full focus:outline-none focus:border-amber-500" />
                 </div>
 
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">PHONE</div>
-                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center ">{basic_details[0].pnone}</p>
+                <div className="form-control w-full mb-4">
+                  <label className="label"><span className="label-text font-semibold">Email Address</span></label>
+                  <input type="email" placeholder="mail@site.com" className="input input-bordered w-full focus:outline-none focus:border-amber-500" required />
                 </div>
 
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">Email</div>
-                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center">{basic_details[0].email}</p>
+                <div className="form-control w-full mb-6">
+                  <label className="label"><span className="label-text font-semibold">Message</span></label>
+                  <textarea className="textarea textarea-bordered h-32 focus:outline-none focus:border-amber-500" placeholder="Tell me about your project..."></textarea>
                 </div>
 
-                <div className=" flex m-3.5">
-                  <div className="bg-amber-600 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center text-white mx-8">Address</div>
-                  <p className="mx-8 w-[2cm] h-[0.7cm] rounded-sm flex items-center justify-center ">{basic_details[0].address}</p>
+                <button className="btn bg-slate-900 text-white hover:bg-amber-600 w-full border-none">Send Message</button>
+              </div>
+            </section>
+
+          </div> {/* End Container */}
+
+          {/* FOOTER */}
+          <footer className="bg-slate-900 text-slate-300 py-12 px-4 text-center">
+            <h2 className="text-2xl font-bold text-white mb-6 tracking-wide">ARNAB ADHIKARY</h2>
+            <div className="flex justify-center gap-6 mb-8">
+              {['facebook', 'instagram', 'twitter'].map((social) => (
+                 <a key={social} href={`https://${social}.com`} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-full hover:bg-amber-500 hover:text-white transition-all">
+                    {/* Simplified SVG placeholder for cleanliness */}
+                    <span className="capitalize text-xs">{social}</span> 
+                 </a>
+              ))}
+            </div>
+            <p className="text-sm opacity-60">&copy; {new Date().getFullYear()} Arnab Adhikary. All rights reserved.</p>
+          </footer>
+        </div>
+      </div>
+
+      {/* ✅ SIDEBAR DRAWER (Left Side) */}
+      <div className="drawer-side z-50">
+        <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
+        
+        <aside className="menu p-0 w-80 min-h-full bg-white text-slate-800 border-r border-slate-200 flex flex-col">
+           {/* Profile Header */}
+           <div className="bg-slate-50 p-8 flex flex-col items-center border-b border-slate-200">
+              <div className="avatar mb-4">
+                <div className="w-24 rounded-full ring ring-amber-500 ring-offset-base-100 ring-offset-2">
+                  {basic_detail_load ? (
+                    <div className="w-full h-full bg-slate-200 animate-pulse"></div>
+                  ) : (
+                    <img src={basic_details[0]?.prifile_url} alt="Profile" />
+                  )}
                 </div>
+              </div>
+              
+              {basic_detail_load ? (
+                 <div className="h-6 w-32 bg-slate-200 animate-pulse rounded"></div>
+              ) : (
+                 <>
+                   <h2 className="text-xl font-bold">{basic_details[0]?.my_name}</h2>
+                   <p className="text-amber-600 font-medium text-sm">{basic_details[0]?.profation}</p>
+                 </>
+              )}
 
-              </div>}
+              {/* Social Icons Mini */}
+              <div className="flex gap-4 mt-4">
+                 <button onClick={() => window.open(basic_details[0]?.github_link)} className="btn btn-circle btn-sm btn-ghost hover:bg-amber-100">
+                    <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GH" className="w-6" />
+                 </button>
+                 <button onClick={() => window.open(basic_details[0]?.linkdin_link)} className="btn btn-circle btn-sm btn-ghost hover:bg-amber-100">
+                    <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LI" className="w-6" />
+                 </button>
+              </div>
+           </div>
+
+           {/* Scrollable Content */}
+           <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
 
-            <hr className=" h-2.5 w-[7cm]" />
-
-            {/* showing language */}
-            <h1 className=" font-bold text-2xl">Languages</h1>
-            {basic_detail_load ? (<span className="loading loading-spinner text-success"></span>) :
+            {/* Contact Info */}
               <div>
-                <div className=" bg-black font-bold text-amber-50 h-[0.8cm] w-[7cm] flex items-center justify-center rounded-md">
-                  {basic_details[0].language}
-                </div>
+                 <h3 className="font-bold text-lg mb-4 border-l-4 border-amber-500 pl-2">Details</h3>
+                 {basic_detail_load ? <span className="loading loading-dots"></span> : (
+                    <div className="text-sm space-y-3">
+                       <div className="flex flex-col">
+                          <span className="text-xs text-slate-400 uppercase font-bold">Phone</span>
+                          <span className="font-medium">{basic_details[0]?.pnone}</span>
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-xs text-slate-400 uppercase font-bold">Email</span>
+                          <span className="font-medium truncate">{basic_details[0]?.email}</span>
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-xs text-slate-400 uppercase font-bold">Location</span>
+                          <span className="font-medium">{basic_details[0]?.address}</span>
+                       </div>
+                       <div className="flex flex-col">
+                          <span className="text-xs text-slate-400 uppercase font-bold">DOB</span>
+                          <span className="font-medium">{basic_details[0]?.date_of_barth}</span>
+                       </div>
+                    </div>
+                 )}
               </div>
-            }
 
+              {/* Languages */}
+              <div className="bg-slate-900 text-amber-50 p-3 rounded-lg text-center text-sm font-semibold">
+                 {basic_detail_load ? "..." : basic_details[0]?.language}
+              </div>
+              
+              {/* Skills */}
+              <div>
+                 <h3 className="font-bold text-lg mb-4 border-l-4 border-amber-500 pl-2">Skills</h3>
+                 {basic_detail_load ? <span className="loading loading-bars"></span> : (
+                   <div className="space-y-3">
+                      {basic_details[0]?.skills.map((item, index) => (
+                        <div key={index} className="flex items-center gap-3">
+                           <div className="w-8 h-8 p-1 bg-slate-100 rounded flex items-center justify-center shrink-0">
+                              <img src={item.icon_url} alt="" className="max-w-full max-h-full" />
+                           </div>
+                           <div className="flex-1">
+                              <div className="flex justify-between text-xs mb-1">
+                                 <span className="font-semibold">{item.skill_name}</span>
+                                 <span>{item.confidance}%</span>
+                              </div>
+                              <progress className="progress progress-warning w-full h-2" value={item.confidance} max="100"></progress>
+                           </div>
+                        </div>
+                      ))}
+                      
+                      {/* Add Skill Button */}
+                      <button onClick={() => check_token('/add/skill')} className="btn btn-xs btn-outline w-full border-dashed border-slate-400 text-slate-500 mt-2">
+                         + Add Skill
+                      </button>
+                   </div>
+                 )}
+              </div>
 
-          </div>
-        </ul>
+              <div className="divider"></div>
+
+           </div>
+        </aside>
       </div>
     </div>
   );
 }
 
 export default App;
-
-
-
