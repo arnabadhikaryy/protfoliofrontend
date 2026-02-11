@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
+import backend_url from './backend_url';
 
 function Create_token() {
   const [id, setId] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+  const MainUrl = backend_url;
   const handleSubmit = async (e) => {
     e.preventDefault();
 

@@ -7,6 +7,8 @@ import ProjectUploadForm from "./component/Project_upload";
 import EducationUploadForm from "./component/education_upload";
 import Create_token from "./component/create_token";
 import AddSkill from "./component/add_skill";
+import EditEducationPage from "./component/edit_education_page";
+import EditBasicDetails from "./component/edit_basic_details_page";
 
 function Master(){
 
@@ -15,9 +17,11 @@ function Master(){
         <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/basic/edit" element={<EditBasicDetails />} />
           <Route path="/upload/servide" element={<UploadService />} />
           <Route path="/upload/project" element={<ProjectUploadForm />} />
           <Route path="/upload/education" element={<EducationUploadForm />} />
+          <Route path="/edit/education/:id" element={<EditEducationPage/>} />
           <Route path="/create/token" element={<Create_token/>}/>
           <Route path="/add/skill" element={<AddSkill />} />
           <Route path="*" element={<NoPage />} />

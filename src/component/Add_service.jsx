@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import backend_url from './backend_url';
 
 const UploadService = () => {
    
-  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+  const MainUrl = backend_url;
 
   const [formData, setFormData] = useState({
     title: '',

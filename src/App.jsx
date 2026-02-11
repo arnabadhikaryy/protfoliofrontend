@@ -3,14 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { RPProvider, RPDefaultLayout, RPPages, RPConfig } from '@pdf-viewer/react'
+import backend_url from "./component/backend_url";
+import React from 'react';
+import { Edit2, Trash2, Plus, ExternalLink, GraduationCap } from 'lucide-react';
 
 function App() {
 
   const navigate = useNavigate();
-  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+  const MainUrl = backend_url;
 
   const [basic_details, set_basic_details] = useState([]);
   const [basic_detail_load, set_basic_detail_load] = useState(true)
+
+  const [skill_details, set_skill_datails] = useState([]);
 
   const [education_details, set_education_details] = useState([]);
   const [education_details_load, set_education_details_load] = useState(true)
@@ -47,6 +52,9 @@ function App() {
 
           if (response_basic.data.data) {
             set_basic_details(response_basic.data.data);
+            set_skill_datails(response_basic.data.data[0].skills);
+            // console.log('fuckyou',response_basic.data.data[0].skills);
+            //  console.log('fuckyou2222',basic_details);
             set_basic_detail_load(false);
           }
 
@@ -90,6 +98,78 @@ function App() {
   };
 
 
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  }
+
+  async function delete_education_Item(backend_url, id_to_delete) {
+    try {
+      const token = getCookie("token");
+
+      // Edge case: token missing
+      if (!token) {
+        toast.error("Authentication token not found. Please login again.");
+        return;
+      }
+
+      // Edge case: id missing
+      if (!id_to_delete) {
+        toast.error("Invalid ID to delete.");
+        return;
+      }
+
+      const response = await axios.delete(backend_url, {
+        data: {
+          _id: id_to_delete,
+          token: token
+        },
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+      return response.data;
+
+    } catch (error) {
+      if (error.response) {
+        toast.error(error.response.data?.message || "Delete failed");
+      } else if (error.request) {
+        toast.error("Network error. Please try again.");
+      } else {
+        toast.error("Something went wrong.");
+      }
+
+      console.error("Delete request failed:", error);
+    }
+  }
+
+  const handleDelete = (item) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      delete_education_Item(`${backend_url}/edu/delete`, item._id)
+        .then(res => {
+          if (res.message) {
+            if (res.status === true) {
+              toast.success(res.message);
+              // Update state
+              const filter_data = education_details.filter((arnab) => arnab._id !== item._id);
+              set_education_details(filter_data);
+            } else {
+              toast.error(res.message);
+            }
+          }
+        })
+        .catch(err => {
+          toast.error('Something went wrong! Try again..');
+          console.error(err);
+        });
+    }
+  };
+
+
+
   return (
     <div className="drawer lg:drawer-open font-sans text-slate-800 bg-slate-50">
       <Toaster />
@@ -107,133 +187,174 @@ function App() {
         {/* MAIN CONTENT AREA */}
         <div className="w-full min-h-screen pb-10">
 
-         {/* HERO SECTION */}
-<div className="relative w-full min-h-[700px] flex items-center bg-slate-950 text-white overflow-hidden">
-  
-  {/* Modern Background Decor */}
-  <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-    <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-amber-600/20 rounded-full blur-[120px]"></div>
-    <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
-  </div>
+          {/* HERO SECTION */}
+          <div className="relative w-full min-h-[700px] flex items-center bg-slate-950 text-white overflow-hidden">
 
-  <div className="relative z-10 container mx-auto px-6 py-12 lg:py-20 flex flex-col lg:flex-row items-center justify-between gap-12">
-    
-    {/* Left Content: Typography & CTA */}
-    <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
-      <div className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm font-medium mb-2">
-        Available for Freelance & Full-time
-      </div>
-      
-      <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
-        I'm <span className="text-white">{basic_detail_load ? "..." : basic_details[0]?.my_name}</span>
-        <span className="block bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mt-2">
-          Full Stack Developer
-        </span>
-      </h1>
-
-      <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0">
-        I build high-performance, beautiful web applications with a focus on clean code and exceptional user experience.
-      </p>
-
-      <div className="flex flex-wrap gap-4 justify-center lg:justify-start pt-4">
-        <button className="btn btn-lg bg-amber-600 hover:bg-amber-700 border-none text-white px-10 shadow-lg shadow-amber-900/20 transition-all hover:scale-105">
-          Hire Me
-        </button>
-        <button className="btn btn-lg btn-outline border-slate-700 text-white hover:bg-white hover:text-black hover:border-white transition-all">
-          View Projects
-        </button>
-      </div>
-
-      {/* Trust Badges / Stats (Optional but looks good) */}
-      <div className="flex items-center justify-center lg:justify-start gap-8 pt-8 border-t border-slate-800/50">
-        <div>
-          <p className="text-2xl font-bold text-white">2+</p>
-          <p className="text-slate-500 text-xs uppercase tracking-widest">Years Exp.</p>
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-white">20+</p>
-          <p className="text-slate-500 text-xs uppercase tracking-widest">Projects</p>
-        </div>
-      </div>
-    </div>
-
-    {/* Right Content: PDF Viewer with Premium Frame */}
-    <div className="w-full lg:w-1/2 flex justify-center">
-      <div className="relative w-full max-w-[500px] group">
-        {/* Decorative background for the PDF */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-        
-        {/* The PDF Container */}
-        <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/50">
-            <div className="flex gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-red-500/20"></div>
-              <div className="w-3 h-3 rounded-full bg-amber-500/20"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/20"></div>
+            {/* Modern Background Decor */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+              <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-amber-600/20 rounded-full blur-[120px]"></div>
+              <div className="absolute -bottom-[10%] -right-[10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px]"></div>
             </div>
-            <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Resume.pdf</span>
-          </div>
 
-          <div className="h-[500px] md:h-[600px] overflow-hidden rounded-b-xl">
-            <RPConfig>
-              <RPProvider src="../src/assets/resume/arnab_cv_1edition.pdf">
-                <RPDefaultLayout>
-                  {''}
-                  <RPPages />
-                </RPDefaultLayout>
-              </RPProvider>
-            </RPConfig>
-          </div>
-        </div>
-      </div>
-    </div>
+            <div className="relative z-10 container mx-auto px-6 py-12 lg:py-20 flex flex-col lg:flex-row items-center justify-between gap-12">
 
-  </div>
-</div>
+              {/* Left Content: Typography & CTA */}
+              <div className="w-full lg:w-1/2 space-y-8 text-center lg:text-left">
+                <div className="inline-block px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm font-medium mb-2">
+                  Available for Freelance & Full-time
+                </div>
+
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
+                  I'm <span className="text-white">{basic_detail_load ? "..." : basic_details[0]?.my_name}</span>
+                  <span className="block bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mt-2">
+                    Full Stack Developer
+                  </span>
+                </h1>
+
+                <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  I build high-performance, beautiful web applications with a focus on clean code and exceptional user experience.
+                </p>
+
+                {/* Trust Badges / Stats (Optional but looks good) */}
+                <div className="flex items-center justify-center lg:justify-start gap-8 pt-8 border-t border-slate-800/50">
+                  <div>
+                    <p className="text-2xl font-bold text-white">2+</p>
+                    <p className="text-slate-500 text-xs uppercase tracking-widest">Years Exp.</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-white">20+</p>
+                    <p className="text-slate-500 text-xs uppercase tracking-widest">Projects</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Content: PDF Viewer with Premium Frame */}
+              <div className="w-full lg:w-1/2 flex justify-center">
+                <div className="relative w-full max-w-[500px] group">
+                  {/* Decorative background for the PDF */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+
+                  {/* The PDF Container */}
+                  <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/50">
+                      <div className="flex gap-1.5">
+                        <div className="w-3 h-3 rounded-full bg-red-500/20"></div>
+                        <div className="w-3 h-3 rounded-full bg-amber-500/20"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500/20"></div>
+                      </div>
+                      <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Resume.pdf</span>
+                    </div>
+
+                    <div className="h-[500px] md:h-[600px] overflow-hidden rounded-b-xl">
+                      <RPConfig>
+                        <RPProvider src="../src/assets/resume/arnab_cv_1edition.pdf">
+                          <RPDefaultLayout>
+                            {''}
+                            <RPPages />
+                          </RPDefaultLayout>
+                        </RPProvider>
+                      </RPConfig>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
 
           <div className="container mx-auto px-4 md:px-8 space-y-24 mt-16">
 
             {/* EDUCATION SECTION */}
-            <section>
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-slate-800">Education</h2>
-                <p className="text-slate-500 mt-2">My academic achievements, courses, and certifications</p>
-                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
-              </div>
+            <section className="py-10 px-4 bg-slate-50">
+              <div className="max-w-5xl mx-auto">
 
-              {education_details_load ? (
-                <div className="flex justify-center p-10"><span className="loading loading-bars loading-lg text-amber-600"></span></div>
-              ) : (
-                <div className="space-y-4 max-w-4xl mx-auto">
-                  {/* Header (Desktop Only) */}
-                  <div className="hidden md:grid grid-cols-12 gap-4 bg-slate-800 text-white p-4 rounded-t-lg font-semibold">
-                    <div className="col-span-3">Title</div>
-                    <div className="col-span-6">Description</div>
-                    <div className="col-span-3 text-center">Certificate</div>
+                {/* Section Header */}
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-extrabold text-slate-800 flex items-center justify-center gap-3">
+                    <GraduationCap className="w-8 h-8 text-amber-500" />
+                    Education
+                  </h2>
+                  <p className="text-slate-500 mt-3 text-lg">My academic achievements, courses, and certifications</p>
+                  <div className="h-1.5 w-24 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto mt-4 rounded-full"></div>
+                </div>
+
+                {education_details_load ? (
+                  <div className="flex justify-center p-12">
+                    <span className="loading loading-bars loading-lg text-amber-600"></span>
                   </div>
+                ) : (
+                  <div className="space-y-6">
 
-                  {/* Rows */}
-                  {education_details.map((item, index) => (
-                    <div key={index} className="flex flex-col md:grid md:grid-cols-12 gap-4 bg-white p-4 rounded-lg shadow-sm border border-slate-200 items-center hover:shadow-md transition-shadow">
-                      <div className="md:col-span-3 font-bold text-amber-600 text-lg md:text-base">{item.title}</div>
-                      <div className="md:col-span-6 text-slate-600 text-sm">{item.discriotion}</div>
-                      <div className="md:col-span-3 w-full flex justify-center">
-                        <div className="h-32 w-full md:w-32 bg-slate-100 rounded-md overflow-hidden border border-slate-200 cursor-pointer group relative" onClick={() => window.open(item.certificate_url, "_blank")}>
-                          <img src={item.certificate_url} alt="Cert" className="h-full w-full object-contain group-hover:scale-110 transition-transform" />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                            <span className="opacity-0 group-hover:opacity-100 text-xs font-bold bg-white px-2 py-1 rounded">View</span>
+                    {/* Education Cards */}
+                    {education_details.map((item, index) => (
+                      <div
+                        key={index}
+                        className="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-200 transition-all duration-300 flex flex-col md:flex-row gap-6"
+                      >
+
+                        {/* 1. Certificate Image Thumbnail */}
+                        <div className="shrink-0 w-full md:w-48 h-48 md:h-auto relative bg-slate-100 rounded-xl overflow-hidden border border-slate-100 cursor-pointer"
+                          onClick={() => window.open(item.certificate_url, "_blank")}>
+                          <img
+                            src={item.certificate_url}
+                            alt="Certificate"
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          {/* Hover Overlay */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                            <span className="flex items-center gap-2 text-white font-medium bg-white/20 px-4 py-2 rounded-full border border-white/30">
+                              <ExternalLink size={16} /> View
+                            </span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
 
-                  {/* Add More */}
-                  <button onClick={() => check_token('/upload/servide')} className="w-full py-3 border-2 border-dashed border-slate-300 text-slate-500 font-semibold rounded-lg hover:border-amber-500 hover:text-amber-600 transition-colors">
-                    + Add New Education
-                  </button>
-                </div>
-              )}
+                        {/* 2. Content */}
+                        <div className="flex-1 flex flex-col justify-center">
+                          <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors">
+                            {item.title}
+                          </h3>
+                          <p className="text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-100 text-sm md:text-base">
+                            {item.discriotion}
+                          </p>
+                        </div>
+
+                        {/* 3. Action Buttons (Absolute Positioned on Desktop, Flex on Mobile) */}
+                        <div className="flex md:flex-col gap-3 justify-end md:justify-start">
+
+                          {/* Edit Button */}
+                          <button
+                            onClick={() => navigate(`/edit/education/${item._id}`)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100"
+                          >
+                            <Edit2 size={16} /> <span className="md:hidden">Edit</span>
+                          </button>
+
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => handleDelete(item)}
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100"
+                          >
+                            <Trash2 size={16} /> <span className="md:hidden">Delete</span>
+                          </button>
+                        </div>
+
+                      </div>
+                    ))}
+
+                    {/* Add New Button */}
+                    <button
+                      onClick={() => check_token('/upload/education')}
+                      className="w-full py-6 mt-4 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center text-slate-500 hover:border-amber-500 hover:text-amber-600 hover:bg-amber-50 transition-all duration-300 group"
+                    >
+                      <div className="bg-slate-100 p-3 rounded-full mb-2 group-hover:bg-amber-100 transition-colors">
+                        <Plus size={24} />
+                      </div>
+                      <span className="font-semibold text-lg">Add New Education</span>
+                    </button>
+
+                  </div>
+                )}
+              </div>
             </section>
 
 
@@ -325,17 +446,17 @@ function App() {
               <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
                 <div className="form-control w-full mb-4">
                   <label className="label"><span className="label-text font-semibold">Your Name</span></label>
-                  <input type="text" placeholder="John Doe" className="input input-bordered w-full focus:outline-none focus:border-amber-500" />
+                  <input type="text" placeholder="Name" className="input input-bordered w-full focus:outline-none focus:border-amber-500" />
                 </div>
 
                 <div className="form-control w-full mb-4">
                   <label className="label"><span className="label-text font-semibold">Email Address</span></label>
-                  <input type="email" placeholder="mail@site.com" className="input input-bordered w-full focus:outline-none focus:border-amber-500" required />
+                  <input type="email" placeholder="Email" className="input input-bordered w-full focus:outline-none focus:border-amber-500" required />
                 </div>
 
                 <div className="form-control w-full mb-6">
                   <label className="label"><span className="label-text font-semibold">Message</span></label>
-                  <textarea className="textarea textarea-bordered h-32 focus:outline-none focus:border-amber-500" placeholder="Tell me about your project..."></textarea>
+                  <textarea className="textarea textarea-bordered h-32 focus:outline-none focus:border-amber-500" placeholder="message for me..."></textarea>
                 </div>
 
                 <button className="btn bg-slate-900 text-white hover:bg-amber-600 w-full border-none">Send Message</button>
@@ -382,6 +503,10 @@ function App() {
             ) : (
               <>
                 <h2 className="text-xl font-bold">{basic_details[0]?.my_name}</h2>
+                <button className="bg-amber-400 cursor-pointer"
+                  onClick={() => {
+                    navigate("/basic/edit")
+                  }}>edit basic details</button>
                 <p className="text-amber-600 font-medium text-sm">{basic_details[0]?.profation}</p>
               </>
             )}
@@ -436,20 +561,76 @@ function App() {
               <h3 className="font-bold text-lg mb-4 border-l-4 border-amber-500 pl-2">Skills</h3>
               {basic_detail_load ? <span className="loading loading-bars"></span> : (
                 <div className="space-y-3">
-                  {basic_details[0]?.skills.map((item, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div className="w-8 h-8 p-1 bg-slate-100 rounded flex items-center justify-center shrink-0">
-                        <img src={item.icon_url} alt="" className="max-w-full max-h-full" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="font-semibold">{item.skill_name}</span>
-                          <span>{item.confidance}%</span>
+                  {
+                    skill_details.length > 0 ?
+                      (
+                        skill_details.map((item, index) => (
+                          <div key={index} className="flex items-center gap-3">
+                            <div className="w-8 h-8 p-1 bg-slate-100 rounded flex items-center justify-center shrink-0">
+                              <img src={item.icon_url} alt="" className="max-w-full max-h-full" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex justify-between text-xs mb-1">
+                                <span className="font-semibold">{item.skill_name}</span>
+                                <span>{item.confidance}%</span>
+                              </div>
+                              <progress className="progress progress-warning w-full h-2" value={item.confidance} max="100"></progress>
+                            </div>
+                            <div>
+                              <button
+                                className="text-red-500 hover:text-red-700 font-medium transition-colors ml-4"
+                                onClick={() => {
+                                  // 1. Ask for confirmation
+                                  if (!window.confirm(`Are you sure you want to delete "${item.skill_name}"?`)) {
+                                    return; // Stop if user clicks Cancel
+                                  }
+
+                                  // 2. Get Token
+                                  const token = document.cookie
+                                    .split("; ")
+                                    .find((row) => row.startsWith("token="))
+                                    ?.split("=")[1];
+
+                                  if (!token) {
+                                    toast.error("Authentication failed!");
+                                    return;
+                                  }
+
+                                  // 3. API Call with Toast Messages
+                                  toast.promise(
+                                    axios.post(`${backend_url}/basic/delete/skill`, {
+                                      skill_name: item.skill_name,
+                                      token: token,
+                                    }),
+                                    {
+                                      loading: "Deleting skill...",
+                                      success: (response) => {
+                                        // OPTIONAL: Update your local state here to remove it from the screen immediately
+                                        set_skill_datails((prev) => prev.filter((s) => s.skill_name !== item.skill_name));
+
+                                        return response.data.message || "Skill deleted successfully!";
+                                      },
+                                      error: (err) => {
+                                        console.error(err);
+                                        return err.response?.data?.message || "Failed to delete skill.";
+                                      },
+                                    }
+                                  );
+                                }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      )
+                      :
+                      (
+                        <div>
+                          loading your skills...
                         </div>
-                        <progress className="progress progress-warning w-full h-2" value={item.confidance} max="100"></progress>
-                      </div>
-                    </div>
-                  ))}
+                      )
+                  }
 
                   {/* Add Skill Button */}
                   <button onClick={() => check_token('/add/skill')} className="btn btn-xs btn-outline w-full border-dashed border-slate-400 text-slate-500 mt-2">

@@ -4,6 +4,7 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import backend_url from './backend_url';
 
 function AddSkill() {
   const [skillName, setSkillName] = useState('');
@@ -13,7 +14,7 @@ function AddSkill() {
   
   const navigate = useNavigate();
 
-  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+  const MainUrl = backend_url;
 
 
 const handleSubmit = async (e) => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import backend_url from "./backend_url";
 
 const EducationUploadForm = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const EducationUploadForm = () => {
     coures_certificate_image: null,
   });
 
-  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+  const MainUrl = backend_url
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 

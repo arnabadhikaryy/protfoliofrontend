@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import backend_url from "./backend_url";
 
 const ProjectUploadForm = () => {
 
@@ -18,7 +19,7 @@ const getCookie = (name) => {
     projectImage: null,
   });
 
-  const MainUrl = 'https://portfoliobackend-production-6dd7.up.railway.app'
+  const MainUrl = backend_url;
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
