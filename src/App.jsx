@@ -247,7 +247,7 @@ function App() {
 
                     <div className="h-[500px] md:h-[600px] overflow-hidden rounded-b-xl">
                       <RPConfig>
-                        <RPProvider src="../src/assets/resume/arnab_cv_1edition.pdf">
+                        <RPProvider src={basic_details[0]?.resume_url}>
                           <RPDefaultLayout>
                             {''}
                             <RPPages />

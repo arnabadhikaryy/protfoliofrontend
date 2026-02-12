@@ -36,8 +36,8 @@ function Create_token() {
       }
     } catch (error) {
       console.error(error);
-      toast.error('Something went wrong.');
-      setMessage('Something went wrong.');
+      toast.error('Wrong credentials or Something went wrong.');
+      setMessage('Wrong credentials or Something went wrong.');
     } finally {
       setLoading(false); // stop loading
     }
