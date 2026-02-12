@@ -1,3 +1,3 @@
-const backend_url = "http://localhost:8000";
+const backend_url = "https://portfolio-backend-avdx.onrender.com";
 
 export default backend_url;
