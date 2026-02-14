@@ -16,7 +16,7 @@ function Master(){
     return(
         <BrowserRouter>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/*" element={<App />} />
           <Route path="/basic/edit" element={<EditBasicDetails />} />
           <Route path="/upload/servide" element={<UploadService />} />
           <Route path="/upload/project" element={<ProjectUploadForm />} />

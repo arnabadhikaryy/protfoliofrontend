@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { RPProvider, RPDefaultLayout, RPPages, RPConfig } from '@pdf-viewer/react'
 import backend_url from "./component/backend_url";
-import React from 'react';
-import { Edit2, Trash2, Plus, ExternalLink, GraduationCap } from 'lucide-react';
+import { Plus, ExternalLink, GraduationCap } from 'lucide-react';
 
 function App() {
 
@@ -13,162 +12,32 @@ function App() {
   const MainUrl = backend_url;
 
   const [basic_details, set_basic_details] = useState([]);
-  const [basic_detail_load, set_basic_detail_load] = useState(true)
-
-  const [skill_details, set_skill_datails] = useState([]);
-
-  const [education_details, set_education_details] = useState([]);
-  const [education_details_load, set_education_details_load] = useState(true)
-
-  const [project_details, set_project_details] = useState([]);
-  const [project_details_load, set_project_details_load] = useState(true)
-
-  const [service_details, set_service_details] = useState([]);
-  const [service_details_load, set_service_details_load] = useState(true)
-
+  const [loading, setLoading] = useState(true);
+  const [skill_details, set_skill_details] = useState([]);
 
   useEffect(() => {
-    const facedetails = async () => {
+    const fetchDetails = async () => {
       try {
-
-        if (
-          basic_details.length === 0 &&
-          education_details.length === 0 &&
-          project_details.length === 0 &&
-          service_details.length === 0
-        ) {
-
+        if (basic_details.length === 0) {
           const response_basic = await axios.get(MainUrl + '/basic/get');
-          // console.log("basic data response is", response_basic.data.data);
-
-          const response_project = await axios.get(MainUrl + '/project/get');
-          // console.log("project data response is", response_project.data.data);
-
-          const response_education = await axios.get(MainUrl + '/edu/get');
-          // console.log("education data response is", response_education.data.data);
-
-          const response_service = await axios.get(MainUrl + '/service/get');
-          // console.log("service data response is", response_service.data.data);
 
           if (response_basic.data.data) {
             set_basic_details(response_basic.data.data);
-            set_skill_datails(response_basic.data.data[0].skills);
-            // console.log('fuckyou',response_basic.data.data[0].skills);
-            //  console.log('fuckyou2222',basic_details);
-            set_basic_detail_load(false);
+            set_skill_details(response_basic.data.data[0]?.skills || []);
+            setLoading(false);
           }
-
-          if (response_project.data.data) {
-            set_project_details(response_project.data.data);
-            set_project_details_load(false);
-          }
-
-          if (response_education.data.data) {
-            set_education_details(response_education.data.data);
-            set_education_details_load(false);
-          }
-
-          if (response_service.data.data) {
-            set_service_details(response_service.data.data);
-            set_service_details_load(false);
-          }
-
         }
       } catch (error) {
         console.error('API error:', error);
+        setLoading(false);
       }
     };
 
-    facedetails();
-  }, []);
+    fetchDetails();
+  }, [basic_details.length, MainUrl]);
 
-  const check_token = (url) => {
-    const cookies = document.cookie.split(';').reduce((acc, curr) => {
-      const [key, value] = curr.trim().split('=');
-      acc[key] = value;
-      return acc;
-    }, {});
-
-    if (!cookies.token) {
-      toast.error("You have no access token ! for create a access token go to '/create/token' URL..");
-      return;
-    }
-
-    navigate(url);
-  };
-
-
-
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  }
-
-  async function delete_education_Item(backend_url, id_to_delete) {
-    try {
-      const token = getCookie("token");
-
-      // Edge case: token missing
-      if (!token) {
-        toast.error("Authentication token not found. Please login again.");
-        return;
-      }
-
-      // Edge case: id missing
-      if (!id_to_delete) {
-        toast.error("Invalid ID to delete.");
-        return;
-      }
-
-      const response = await axios.delete(backend_url, {
-        data: {
-          _id: id_to_delete,
-          token: token
-        },
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-      return response.data;
-
-    } catch (error) {
-      if (error.response) {
-        toast.error(error.response.data?.message || "Delete failed");
-      } else if (error.request) {
-        toast.error("Network error. Please try again.");
-      } else {
-        toast.error("Something went wrong.");
-      }
-
-      console.error("Delete request failed:", error);
-    }
-  }
-
-  const handleDelete = (item) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      delete_education_Item(`${backend_url}/edu/delete`, item._id)
-        .then(res => {
-          if (res.message) {
-            if (res.status === true) {
-              toast.success(res.message);
-              // Update state
-              const filter_data = education_details.filter((arnab) => arnab._id !== item._id);
-              set_education_details(filter_data);
-            } else {
-              toast.error(res.message);
-            }
-          }
-        })
-        .catch(err => {
-          toast.error('Something went wrong! Try again..');
-          console.error(err);
-        });
-    }
-  };
-
-
+  // Helper to safely access the first item
+  const data = basic_details[0];
 
   return (
     <div className="drawer lg:drawer-open font-sans text-slate-800 bg-slate-50">
@@ -205,36 +74,34 @@ function App() {
                 </div>
 
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1]">
-                  I'm <span className="text-white">{basic_detail_load ? "..." : basic_details[0]?.my_name}</span>
+                  I'm <span className="text-white">{loading ? "..." : data?.my_name}</span>
                   <span className="block bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent mt-2">
-                    Full Stack Developer
+                    <div>{loading ? "..." : data?.profation}</div>
                   </span>
                 </h1>
 
-                <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0">
-                  I build high-performance, beautiful web applications with a focus on clean code and exceptional user experience.
-                </p>
+                <div className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  <div>{loading ? "..." : data?.about_me}</div>
+                </div>
 
-                {/* Trust Badges / Stats (Optional but looks good) */}
+                {/* Trust Badges / Stats */}
                 <div className="flex items-center justify-center lg:justify-start gap-8 pt-8 border-t border-slate-800/50">
                   <div>
-                    <p className="text-2xl font-bold text-white">2+</p>
+                    <div className="text-2xl font-bold text-white">{loading ? "..." : data?.exprience}+</div>
                     <p className="text-slate-500 text-xs uppercase tracking-widest">Years Exp.</p>
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-white">20+</p>
+                    <div className="text-2xl font-bold text-white">{loading ? "..." : data?.project_count}+</div>
                     <p className="text-slate-500 text-xs uppercase tracking-widest">Projects</p>
                   </div>
                 </div>
               </div>
 
-              {/* Right Content: PDF Viewer with Premium Frame */}
+              {/* Right Content: PDF Viewer */}
               <div className="w-full lg:w-1/2 flex justify-center">
                 <div className="relative w-full max-w-[500px] group">
-                  {/* Decorative background for the PDF */}
                   <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
 
-                  {/* The PDF Container */}
                   <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-2xl overflow-hidden">
                     <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-900/50">
                       <div className="flex gap-1.5">
@@ -247,9 +114,8 @@ function App() {
 
                     <div className="h-[500px] md:h-[600px] overflow-hidden rounded-b-xl">
                       <RPConfig>
-                        <RPProvider src={basic_details[0]?.resume_url}>
+                        <RPProvider src={data?.resume_url}>
                           <RPDefaultLayout>
-                            {''}
                             <RPPages />
                           </RPDefaultLayout>
                         </RPProvider>
@@ -264,35 +130,31 @@ function App() {
 
           <div className="container mx-auto px-4 md:px-8 space-y-24 mt-16">
 
-            {/* EDUCATION SECTION */}
+            {/* EDUCATION SECTION  */}
             <section className="py-10 px-4 bg-slate-50">
               <div className="max-w-5xl mx-auto">
 
-                {/* Section Header */}
                 <div className="text-center mb-12">
                   <h2 className="text-3xl font-extrabold text-slate-800 flex items-center justify-center gap-3">
                     <GraduationCap className="w-8 h-8 text-amber-500" />
-                    Education
+                    Learning
                   </h2>
                   <p className="text-slate-500 mt-3 text-lg">My academic achievements, courses, and certifications</p>
                   <div className="h-1.5 w-24 bg-gradient-to-r from-amber-400 to-orange-500 mx-auto mt-4 rounded-full"></div>
                 </div>
 
-                {education_details_load ? (
+                {loading ? (
                   <div className="flex justify-center p-12">
                     <span className="loading loading-bars loading-lg text-amber-600"></span>
                   </div>
                 ) : (
                   <div className="space-y-6">
-
                     {/* Education Cards */}
-                    {education_details.map((item, index) => (
+                    {data?.education?.map((item, index) => (
                       <div
                         key={index}
                         className="group relative bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-xl hover:border-amber-200 transition-all duration-300 flex flex-col md:flex-row gap-6"
                       >
-
-                        {/* 1. Certificate Image Thumbnail */}
                         <div className="shrink-0 w-full md:w-48 h-48 md:h-auto relative bg-slate-100 rounded-xl overflow-hidden border border-slate-100 cursor-pointer"
                           onClick={() => window.open(item.certificate_url, "_blank")}>
                           <img
@@ -300,7 +162,6 @@ function App() {
                             alt="Certificate"
                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
-                          {/* Hover Overlay */}
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                             <span className="flex items-center gap-2 text-white font-medium bg-white/20 px-4 py-2 rounded-full border border-white/30">
                               <ExternalLink size={16} /> View
@@ -308,7 +169,6 @@ function App() {
                           </div>
                         </div>
 
-                        {/* 2. Content */}
                         <div className="flex-1 flex flex-col justify-center">
                           <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2 group-hover:text-amber-600 transition-colors">
                             {item.title}
@@ -317,33 +177,12 @@ function App() {
                             {item.discriotion}
                           </p>
                         </div>
-
-                        {/* 3. Action Buttons (Absolute Positioned on Desktop, Flex on Mobile) */}
-                        <div className="flex md:flex-col gap-3 justify-end md:justify-start">
-
-                          {/* Edit Button */}
-                          <button
-                            onClick={() => navigate(`/edit/education/${item._id}`)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100"
-                          >
-                            <Edit2 size={16} /> <span className="md:hidden">Edit</span>
-                          </button>
-
-                          {/* Delete Button */}
-                          <button
-                            onClick={() => handleDelete(item)}
-                            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-100"
-                          >
-                            <Trash2 size={16} /> <span className="md:hidden">Delete</span>
-                          </button>
-                        </div>
-
                       </div>
                     ))}
 
                     {/* Add New Button */}
                     <button
-                      onClick={() => check_token('/upload/education')}
+                      onClick={() => { navigate('/basic/edit') }}
                       className="w-full py-6 mt-4 border-2 border-dashed border-slate-300 rounded-2xl flex flex-col items-center justify-center text-slate-500 hover:border-amber-500 hover:text-amber-600 hover:bg-amber-50 transition-all duration-300 group"
                     >
                       <div className="bg-slate-100 p-3 rounded-full mb-2 group-hover:bg-amber-100 transition-colors">
@@ -351,12 +190,10 @@ function App() {
                       </div>
                       <span className="font-semibold text-lg">Add New Education</span>
                     </button>
-
                   </div>
                 )}
               </div>
             </section>
-
 
             {/* PROJECT SECTION */}
             <section>
@@ -366,11 +203,11 @@ function App() {
                 <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
               </div>
 
-              {project_details_load ? (
+              {loading ? (
                 <div className="flex justify-center"><span className="loading loading-bars loading-lg text-amber-600"></span></div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {project_details.map((item, index) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-6">
+                  {data?.projects?.map((item, index) => (
                     <div key={index} className="card bg-white shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-100 overflow-hidden group">
                       <figure className="h-48 overflow-hidden relative">
                         <img src={item.project_snap_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -386,7 +223,9 @@ function App() {
                   ))}
 
                   {/* Add Project Card */}
-                  <div onClick={() => check_token('/upload/project')} className="card h-full min-h-[300px] border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-amber-500 transition-all group">
+                  <div onClick={() => {
+                    navigate('/basic/edit');
+                  }} className="card h-full min-h-[300px] border-2 border-dashed border-slate-300 flex items-center justify-center cursor-pointer hover:bg-slate-50 hover:border-amber-500 transition-all group">
                     <div className="text-center">
                       <div className="text-4xl text-slate-300 group-hover:text-amber-500 mb-2">+</div>
                       <span className="font-semibold text-slate-400 group-hover:text-amber-600">Add Project</span>
@@ -396,87 +235,22 @@ function App() {
               )}
             </section>
 
-
-            {/* SERVICE SECTION */}
-            <section>
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-slate-800">Services</h2>
-                <p className="text-slate-500 mt-2">What I can do for you</p>
-                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {service_details_load ? (
-                  <div className="col-span-full flex justify-center"><span className="loading loading-bars loading-lg text-amber-600"></span></div>
-                ) : (
-                  service_details.map((item, i) => (
-                    <div key={i} className="bg-white rounded-xl p-6 shadow-md border-t-4 border-amber-500 hover:-translate-y-2 transition-transform duration-300 flex flex-col items-center text-center h-full">
-                      <div className="h-20 w-20 mb-4 p-2 bg-amber-50 rounded-full">
-                        <img src={item.icon_url} alt="Icon" className="object-contain w-full h-full" />
-                      </div>
-                      <h3 className="font-bold text-lg text-slate-800 mb-2">{item.title}</h3>
-                      <p className="text-slate-500 text-sm mb-4 flex-grow">
-                        {item.discriotion}
-                      </p>
-                      <div className="mt-auto w-full">
-                        <p className="text-amber-600 font-bold text-lg mb-3">₹{item.price}</p>
-                        <button className="btn btn-outline btn-sm w-full hover:bg-amber-500 hover:border-amber-500">Contact Me</button>
-                      </div>
-                    </div>
-                  ))
-                )}
-
-                {/* Add Service Card */}
-                <div onClick={() => check_token('/upload/servide')} className="rounded-xl p-6 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-amber-50 hover:border-amber-400 transition-all min-h-[300px]">
-                  <span className="text-4xl mb-2">✨</span>
-                  <h3 className="font-bold text-lg text-slate-400">New Service</h3>
-                  <p className="text-xs text-slate-400">Click to add</p>
-                </div>
-              </div>
-            </section>
-
-
-            {/* CONTACT SECTION */}
-            <section className="max-w-xl mx-auto mb-20">
-              <div className="text-center mb-10">
-                <h2 className="text-3xl font-bold text-slate-800">Contact Me</h2>
-                <div className="h-1 w-20 bg-amber-500 mx-auto mt-4 rounded-full"></div>
-              </div>
-
-              <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
-                <div className="form-control w-full mb-4">
-                  <label className="label"><span className="label-text font-semibold">Your Name</span></label>
-                  <input type="text" placeholder="Name" className="input input-bordered w-full focus:outline-none focus:border-amber-500" />
-                </div>
-
-                <div className="form-control w-full mb-4">
-                  <label className="label"><span className="label-text font-semibold">Email Address</span></label>
-                  <input type="email" placeholder="Email" className="input input-bordered w-full focus:outline-none focus:border-amber-500" required />
-                </div>
-
-                <div className="form-control w-full mb-6">
-                  <label className="label"><span className="label-text font-semibold">Message</span></label>
-                  <textarea className="textarea textarea-bordered h-32 focus:outline-none focus:border-amber-500" placeholder="message for me..."></textarea>
-                </div>
-
-                <button className="btn bg-slate-900 text-white hover:bg-amber-600 w-full border-none">Send Message</button>
-              </div>
-            </section>
-
           </div> {/* End Container */}
 
           {/* FOOTER */}
           <footer className="bg-slate-900 text-slate-300 py-12 px-4 text-center">
-            <h2 className="text-2xl font-bold text-white mb-6 tracking-wide">ARNAB ADHIKARY</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 tracking-wide">{loading ? "..." : data?.my_name}</h2>
+            <span className=" m-2.5">{loading ? "..." : data?.email}</span>
             <div className="flex justify-center gap-6 mb-8">
-              {['facebook', 'instagram', 'twitter'].map((social) => (
-                <a key={social} href={`https://${social}.com`} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-full hover:bg-amber-500 hover:text-white transition-all">
-                  {/* Simplified SVG placeholder for cleanliness */}
-                  <span className="capitalize text-xs">{social}</span>
-                </a>
-              ))}
+              <a key={'GitHub'} href={data?.github_link} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-full hover:bg-amber-500 hover:text-white transition-all">
+                <span className="capitalize text-xs">GitHub</span>
+              </a>
+
+              <a key={'LinkedIn'} href={data?.linkdin_link} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 rounded-full hover:bg-amber-500 hover:text-white transition-all">
+                <span className="capitalize text-xs">LinkedIn</span>
+              </a>
             </div>
-            <p className="text-sm opacity-60">&copy; {new Date().getFullYear()} Arnab Adhikary. All rights reserved.</p>
+            <p className="text-sm opacity-60">&copy; {new Date().getFullYear()} {data?.my_name}. All rights reserved.</p>
           </footer>
         </div>
       </div>
@@ -490,62 +264,65 @@ function App() {
           <div className="bg-slate-50 p-8 flex flex-col items-center border-b border-slate-200">
             <div className="avatar mb-4">
               <div className="w-24 rounded-full ring ring-amber-500 ring-offset-base-100 ring-offset-2">
-                {basic_detail_load ? (
+                {loading ? (
                   <div className="w-full h-full bg-slate-200 animate-pulse"></div>
                 ) : (
-                  <img src={basic_details[0]?.prifile_url} alt="Profile" />
+                  <img src={data?.prifile_url} alt="Profile" />
                 )}
               </div>
             </div>
 
-            {basic_detail_load ? (
+            {loading ? (
               <div className="h-6 w-32 bg-slate-200 animate-pulse rounded"></div>
             ) : (
               <>
-                <h2 className="text-xl font-bold">{basic_details[0]?.my_name}</h2>
-                <button className="bg-amber-400 cursor-pointer"
-                  onClick={() => {
-                    navigate("/basic/edit")
-                  }}>edit basic details</button>
-                <p className="text-amber-600 font-medium text-sm">{basic_details[0]?.profation}</p>
+                <h2 className="text-xl font-bold">{data?.my_name}</h2>
+                <p className="text-amber-600 font-medium text-sm">{data?.profation}</p>
               </>
             )}
 
             {/* Social Icons Mini */}
             <div className="flex gap-4 mt-4">
-              <button onClick={() => window.open(basic_details[0]?.github_link)} className="btn btn-circle btn-sm btn-ghost hover:bg-amber-100">
+              <button onClick={() => window.open(data?.github_link)} className="btn btn-circle btn-sm btn-ghost hover:bg-amber-100">
                 <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GH" className="w-6" />
               </button>
-              <button onClick={() => window.open(basic_details[0]?.linkdin_link)} className="btn btn-circle btn-sm btn-ghost hover:bg-amber-100">
+              <button onClick={() => window.open(data?.linkdin_link)} className="btn btn-circle btn-sm btn-ghost hover:bg-amber-100">
                 <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LI" className="w-6" />
               </button>
             </div>
+            <button
+              onClick={() => navigate('/basic/edit')}
+              className="flex cursor-pointer mt-7 items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-lg hover:shadow-indigo-200/50 transform active:scale-95 transition-all"
+            >
+              Edit Portfolio
+            </button>
           </div>
+
+
 
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
-
             {/* Contact Info */}
             <div>
               <h3 className="font-bold text-lg mb-4 border-l-4 border-amber-500 pl-2">Details</h3>
-              {basic_detail_load ? <span className="loading loading-dots"></span> : (
+              {loading ? <span className="loading loading-dots"></span> : (
                 <div className="text-sm space-y-3">
                   <div className="flex flex-col">
                     <span className="text-xs text-slate-400 uppercase font-bold">Phone</span>
-                    <span className="font-medium">{basic_details[0]?.pnone}</span>
+                    <span className="font-medium">{data?.pnone}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-slate-400 uppercase font-bold">Email</span>
-                    <span className="font-medium truncate">{basic_details[0]?.email}</span>
+                    <span className="font-medium truncate">{data?.email}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-slate-400 uppercase font-bold">Location</span>
-                    <span className="font-medium">{basic_details[0]?.address}</span>
+                    <span className="font-medium">{data?.address}</span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs text-slate-400 uppercase font-bold">DOB</span>
-                    <span className="font-medium">{basic_details[0]?.date_of_barth}</span>
+                    <span className="font-medium">{data?.date_of_barth}</span>
                   </div>
                 </div>
               )}
@@ -553,13 +330,13 @@ function App() {
 
             {/* Languages */}
             <div className="bg-slate-900 text-amber-50 p-3 rounded-lg text-center text-sm font-semibold">
-              {basic_detail_load ? "..." : basic_details[0]?.language}
+              {loading ? "..." : data?.language}
             </div>
 
             {/* Skills */}
             <div>
               <h3 className="font-bold text-lg mb-4 border-l-4 border-amber-500 pl-2">Skills</h3>
-              {basic_detail_load ? <span className="loading loading-bars"></span> : (
+              {loading ? <span className="loading loading-bars"></span> : (
                 <div className="space-y-3">
                   {
                     skill_details.length > 0 ?
@@ -576,64 +353,19 @@ function App() {
                               </div>
                               <progress className="progress progress-warning w-full h-2" value={item.confidance} max="100"></progress>
                             </div>
-                            <div>
-                              <button
-                                className="text-red-500 hover:text-red-700 font-medium transition-colors ml-4"
-                                onClick={() => {
-                                  // 1. Ask for confirmation
-                                  if (!window.confirm(`Are you sure you want to delete "${item.skill_name}"?`)) {
-                                    return; // Stop if user clicks Cancel
-                                  }
-
-                                  // 2. Get Token
-                                  const token = document.cookie
-                                    .split("; ")
-                                    .find((row) => row.startsWith("token="))
-                                    ?.split("=")[1];
-
-                                  if (!token) {
-                                    toast.error("Authentication failed!");
-                                    return;
-                                  }
-
-                                  // 3. API Call with Toast Messages
-                                  toast.promise(
-                                    axios.post(`${backend_url}/basic/delete/skill`, {
-                                      skill_name: item.skill_name,
-                                      token: token,
-                                    }),
-                                    {
-                                      loading: "Deleting skill...",
-                                      success: (response) => {
-                                        // OPTIONAL: Update your local state here to remove it from the screen immediately
-                                        set_skill_datails((prev) => prev.filter((s) => s.skill_name !== item.skill_name));
-
-                                        return response.data.message || "Skill deleted successfully!";
-                                      },
-                                      error: (err) => {
-                                        console.error(err);
-                                        return err.response?.data?.message || "Failed to delete skill.";
-                                      },
-                                    }
-                                  );
-                                }}
-                              >
-                                Delete
-                              </button>
-                            </div>
                           </div>
                         ))
                       )
                       :
                       (
                         <div>
-                          loading your skills...
+                          No skills added yet...
                         </div>
                       )
                   }
 
                   {/* Add Skill Button */}
-                  <button onClick={() => check_token('/add/skill')} className="btn btn-xs btn-outline w-full border-dashed border-slate-400 text-slate-500 mt-2">
+                  <button onClick={() => { navigate('/basic/edit') }} className="btn btn-xs btn-outline w-full border-dashed border-slate-400 text-slate-500 mt-2">
                     + Add Skill
                   </button>
                 </div>
