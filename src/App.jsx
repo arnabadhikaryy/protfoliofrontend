@@ -290,12 +290,24 @@ function App() {
                 <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LI" className="w-6" />
               </button>
             </div>
-            <button
-              onClick={() => navigate('/basic/edit')}
-              className="flex cursor-pointer mt-7 items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-lg hover:shadow-indigo-200/50 transform active:scale-95 transition-all"
-            >
-              Edit Portfolio
-            </button>
+            {
+              loading ? (
+                <div>
+                  <button
+                    className="flex cursor-progress mt-7 items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-lg hover:shadow-indigo-200/50 transform active:scale-95 transition-all"
+                  >
+                    Edit Portfolio <span className="loading loading-bars"></span>
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate('/basic/edit')}
+                  className="flex cursor-pointer mt-7 items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-lg hover:shadow-indigo-200/50 transform active:scale-95 transition-all"
+                >
+                  Edit Portfolio
+                </button>
+              )
+            }
           </div>
 
 
